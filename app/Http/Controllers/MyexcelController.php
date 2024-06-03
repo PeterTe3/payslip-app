@@ -5,17 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use App\Models\Batch; // Assuming you are using models with namespaces
+use App\Batch;
 use App\Imports\SalarySheetImport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
+
 use Exception;
 
 class MyexcelController extends Controller
 {
+    
     public function importExport()
     {
-        return view('importExport');
-    }
+        $page_title = 'Import Export Page';
+    $page_description = 'Description for the index page'; // Define the $page_description variable
+    return view('importExport', compact('page_title', 'page_description'));
+     }
+    
 
     public function import_salary_sheet(Request $request)
     {

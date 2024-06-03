@@ -34,6 +34,7 @@ return new class extends Migration
 			$table->string('net_salary');
             $table->string('tp_al');
             $table->string('paye');
+            $table->string('soc_pen');
             $table->string('emp_pen');
             $table->string('welf');
             $table->string('getbucks');
