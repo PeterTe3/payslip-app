@@ -10,30 +10,64 @@ class SalaryController extends Controller
 {
     public function index()
     {
-        return Salary::all();
+        $salaries = Salary::all();
+        return view('salaries.index', ['salaries' => $salaries]);
     }
 
-    public function show($id)
+    public function create()
     {
-        return Salary::findOrFail($id);
+        return view('salaries.create');
     }
 
     public function store(Request $request)
     {
-        return Salary::create($request->all());
+        // Validate input data
+        $validatedData = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'amount' => 'required|numeric',
+            'effective_date' => 'required|date',
+        ]);
+
+        // Create new salary
+        Salary::create($validatedData);
+
+        return redirect()->route('salaries.index')->with('success', 'Salary created successfully.');
+    }
+
+    public function show($id)
+    {
+        $salary = Salary::findOrFail($id);
+        return view('salaries.show', ['salary' => $salary]);
+    }
+
+    public function edit($id)
+    {
+        $salary = Salary::findOrFail($id);
+        return view('salaries.edit', ['salary' => $salary]);
     }
 
     public function update(Request $request, $id)
     {
+        // Validate input data
+        $validatedData = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'amount' => 'required|numeric',
+            'effective_date' => 'required|date',
+        ]);
+
+        // Update the salary
         $salary = Salary::findOrFail($id);
-        $salary->update($request->all());
-        return $salary;
+        $salary->update($validatedData);
+
+        return redirect()->route('salaries.index')->with('success', 'Salary updated successfully.');
     }
 
     public function destroy($id)
     {
+        // Delete the salary
         $salary = Salary::findOrFail($id);
         $salary->delete();
-        return response()->json(['message' => 'Salary deleted successfully']);
+
+        return redirect()->route('salaries.index')->with('success', 'Salary deleted successfully.');
     }
 }
