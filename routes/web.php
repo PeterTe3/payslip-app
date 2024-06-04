@@ -1,26 +1,36 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MyexcelController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\SalaryController;
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
+})->name('root');
+
+Auth::routes();
+
+// Dashboard section
+Route::middleware('auth')->group(function () {
+    Route::get('/home', [HomeController::class, 'getDashboard'])->name('home');
+    
+    Route::get('/batch/{batch_id}', [HomeController::class, 'getBatch'])->name('batch');
+    Route::get('/deletebatch/{batch_id}', [HomeController::class, 'deleteBatch'])->name('deletebatch');
+    Route::get('/exportpdf', [HomeController::class, 'getExportPDF'])->name('exportpdf');
+    Route::post('/exportbulkpdf', [HomeController::class, 'postExportBulkPDF'])->name('exportbulkpdf');
+    Route::get('/importexcel', [MyexcelController::class, 'importExport'])->name('importexcel.get');
+    Route::post('/importexcel', [MyexcelController::class, 'import_salary_sheet'])->name('importexcel.post');
+    Route::get('/deletentry/{tblid}', [HomeController::class, 'deletePayslip'])->name('deletentry');
 });
-
-// Routes for employees
-Route::get('/employees', [EmployeeController::class, 'index']);
-Route::get('/employees/{id}', [EmployeeController::class, 'show']);
-Route::post('/employees', [EmployeeController::class, 'store']);
-Route::put('/employees/{id}', [EmployeeController::class, 'update']);
-Route::delete('/employees/{id}', [EmployeeController::class, 'destroy']);
-
-// Routes for salaries
-Route::get('/salaries', [SalaryController::class, 'index']);
-Route::get('/salaries/{id}', [SalaryController::class, 'show']);
-Route::post('/salaries', [SalaryController::class, 'store']);
-Route::put('/salaries/{id}', [SalaryController::class, 'update']);
-Route::delete('/salaries/{id}', [SalaryController::class, 'destroy']);
-
-Route::middleware('auth')->get('/employees', [EmployeeController::class, 'index']);
-Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
